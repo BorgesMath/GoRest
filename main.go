@@ -1,6 +1,7 @@
 package main
 
 import (
+	"APIGoRest/database"
 	"APIGoRest/models"
 	"APIGoRest/routes"
 	"fmt"
@@ -12,6 +13,7 @@ func main() {
 		{Id: 2, Nome: "Nome 2", Historia: "Historia 2"},
 	}
 
+	database.ConectarComBanco()
 	fmt.Println("Iniciando o servidor Rest go")
 	routes.HandleRequest()
 }

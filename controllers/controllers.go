@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"APIGoRest/database"
 	"APIGoRest/models"
 	"encoding/json"
 	"fmt"
@@ -16,7 +17,9 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 func TodasPersonalidades(w http.ResponseWriter, r *http.Request) {
 
-	json.NewEncoder(w).Encode(models.Personalidades)
+	var p []models.Personalidade
+	database.DB.Find(&p)
+	json.NewEncoder(w).Encode(p)
 
 }
 
