@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"APIGoRest/database"
 	"APIGoRest/models"
 	"encoding/json"
 	"fmt"
@@ -16,7 +17,9 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 func TodasPersonalidades(w http.ResponseWriter, r *http.Request) {
 
-	json.NewEncoder(w).Encode(models.Personalidades)
+	var p []models.Personalidade
+	database.DB.Find(&p)
+	json.NewEncoder(w).Encode(p)
 
 }
 
@@ -27,15 +30,24 @@ func RetornarUmaPersonalidade(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		errorMessage := fmt.Sprintf("Erro transformar Id: %v", err)
+		fmt.Println(errorMessage)
+
 		return
 	}
 
-	for _, personalidade := range models.Personalidades {
-		if personalidade.Id == int(id) { // Converta id para int para compararar
-			json.NewEncoder(w).Encode(personalidade)
-			return // Adicione um return para evitar loop
-		}
-	}
+	var p models.Personalidade
 
-	http.Error(w, "Personalidade não encontrada", http.StatusNotFound) // Retorna um erro se a personalidade não for encontrada
+	database.DB.First(&p, id)
+	json.NewEncoder(w).Encode(p)
+
+}
+
+func CriaUmaNovaPersonalidade(w http.ResponseWriter, r *http.Request) {
+
+	var NovaP models.Personalidade
+	json.NewDecoder(r.Body).Decode(&NovaP)
+	database.DB.Create(&NovaP)
+	json.NewEncoder(w).Encode(NovaP)
+
 }
